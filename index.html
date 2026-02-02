@@ -237,10 +237,8 @@
             background: linear-gradient(135deg, #999 0%, #bbb 100%);
         }
 
-        .btn-no.moving {
-            position: fixed;
-            z-index: 9999;
-            transition: left 0.2s ease-out, top 0.2s ease-out, transform 0.2s ease-out, opacity 0.2s ease-out;
+        .btn-no {
+            transition: all 0.3s ease;
         }
 
         /* Success Message */
@@ -794,102 +792,43 @@
 
         let noClickCount = 0;
         const noBtn = document.getElementById('noBtn');
-        let currentScale = 1;
-
-        let lastPositionIndex = -1;
-        
-        // Store initial button size before any transforms
-        let initialBtnWidth = 0;
-        let initialBtnHeight = 0;
 
         function moveNoButton() {
             noClickCount++;
             
-            // Store initial dimensions on first click
-            if (initialBtnWidth === 0) {
-                initialBtnWidth = noBtn.offsetWidth;
-                initialBtnHeight = noBtn.offsetHeight;
-            }
-            
-            // Add moving class to make it fixed position
-            noBtn.classList.add('moving');
-            
-            // Get Yes button position
-            const yesBtn = document.querySelector('.btn-yes');
-            const yesBtnRect = yesBtn.getBoundingClientRect();
-            const yesCenterX = yesBtnRect.left + yesBtnRect.width / 2;
-            const yesCenterY = yesBtnRect.top + yesBtnRect.height / 2;
-            
-            // Screen dimensions with safe margins
-            const screenW = window.innerWidth;
-            const screenH = window.innerHeight;
-            const margin = 20;
-            
-            // Button size (use initial size, accounting for potential scale)
-            const btnW = initialBtnWidth;
-            const btnH = initialBtnHeight;
-            
-            // Calculate safe bounds
-            const minX = margin;
-            const maxX = screenW - btnW - margin;
-            const minY = margin;
-            const maxY = screenH - btnH - margin;
-            
-            // Generate position near Yes button but within screen
-            // Use smaller offsets that are guaranteed to stay on screen
-            const isMobile = screenW < 500;
-            const maxOffset = isMobile ? 80 : 120;
-            
-            // Random angle and distance from Yes button
-            const angle = Math.random() * 2 * Math.PI;
-            const distance = 60 + Math.random() * maxOffset;
-            
-            let newX = yesCenterX + Math.cos(angle) * distance - btnW / 2;
-            let newY = yesCenterY + Math.sin(angle) * distance - btnH / 2;
-            
-            // Force clamp to screen bounds
-            newX = Math.max(minX, Math.min(maxX, newX));
-            newY = Math.max(minY, Math.min(maxY, newY));
-            
-            // Extra safety check - if still somehow outside, center near Yes button
-            if (newX < 0 || newX > screenW - btnW || newY < 0 || newY > screenH - btnH) {
-                newX = Math.max(minX, Math.min(maxX, yesCenterX - btnW / 2 + (Math.random() - 0.5) * 100));
-                newY = Math.max(minY, Math.min(maxY, yesCenterY - btnH / 2 + (Math.random() - 0.5) * 80));
-            }
-            
-            // Apply position
-            noBtn.style.left = newX + 'px';
-            noBtn.style.top = newY + 'px';
-            
-            // Change button text - many transitions!
+            // Change button text
             const texts = [
                 'No 😢', 
                 'Are you sure? 🥺', 
-                'Please reconsider? 💔', 
+                'Please? 💔', 
                 'Think again! 😭', 
                 'Pretty please? 🙏', 
-                'Really really? 😿', 
+                'Really? 😿', 
                 'I\'ll be sad... 💧',
                 'One more chance? 🌹',
-                'Don\'t break my heart 💗',
-                'You\'re breaking my heart! 😩',
+                'Please please! 💗',
+                'Come on! 😩',
                 'I won\'t give up! 💪',
-                'Say yes already! 🥹',
-                'Fine... 💫', 
+                'Say yes! 🥹',
+                'Okay fine... 💫', 
                 '...'
             ];
+            
             if (noClickCount < texts.length) {
                 noBtn.textContent = texts[noClickCount];
             }
             
-            // Shrink slower - only start shrinking after 6 clicks
-            if (noClickCount <= 6) {
-                currentScale = 1;
+            // Shrink the button progressively
+            let scale;
+            if (noClickCount <= 4) {
+                scale = 1 - (noClickCount * 0.05); // Shrink slowly at first
             } else {
-                currentScale = Math.max(0.3, 1 - ((noClickCount - 6) * 0.12));
+                scale = 0.8 - ((noClickCount - 4) * 0.08); // Shrink faster after
             }
-            noBtn.style.transform = `scale(${currentScale})`;
-            noBtn.style.opacity = Math.max(0.4, currentScale);
+            scale = Math.max(0.3, scale);
+            
+            noBtn.style.transform = `scale(${scale})`;
+            noBtn.style.opacity = Math.max(0.5, scale);
             
             // Make button vanish after many clicks
             if (noClickCount >= 14) {
