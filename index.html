@@ -446,6 +446,74 @@
             display: none !important;
         }
 
+        /* YouTube Player */
+        .youtube-player {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 10000;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            box-shadow: 0 8px 30px rgba(196, 30, 58, 0.3);
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .youtube-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 15px;
+            background: linear-gradient(135deg, var(--deep-rose), var(--blush-pink));
+            color: white;
+            font-family: 'Quicksand', sans-serif;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .youtube-toggle {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.2rem;
+            line-height: 1;
+            transition: all 0.3s ease;
+        }
+
+        .youtube-toggle:hover {
+            background: rgba(255, 255, 255, 0.4);
+        }
+
+        .youtube-content {
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+
+        .youtube-content.collapsed {
+            height: 0 !important;
+        }
+
+        .youtube-player iframe {
+            display: block;
+        }
+
+        /* Mobile responsive */
+        @media (max-width: 480px) {
+            .youtube-player {
+                bottom: 10px;
+                right: 10px;
+                left: 10px;
+            }
+            .youtube-player iframe {
+                width: 100%;
+                height: 120px;
+            }
+        }
+
         /* Video Background for Initial State */
         .video-bg {
             position: fixed;
@@ -605,6 +673,27 @@
     </style>
 </head>
 <body>
+    <!-- YouTube Music Player -->
+    <div class="youtube-player" id="youtubePlayer">
+        <div class="youtube-header">
+            <span>🎵 Music</span>
+            <button class="youtube-toggle" id="youtubeToggle" onclick="toggleYoutubePlayer()">−</button>
+        </div>
+        <div class="youtube-content" id="youtubeContent">
+            <!-- Replace VIDEO_ID with your YouTube video ID -->
+            <!-- Example: For https://www.youtube.com/watch?v=450p7goxZqg use 450p7goxZqg -->
+            <iframe 
+                id="youtubeIframe"
+                width="250" 
+                height="140" 
+                src="https://www.youtube.com/watch?v=F6hbs-DpL7c&list=RDF6hbs-DpL7c&start_radio=1" 
+                frameborder="0" 
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                allowfullscreen>
+            </iframe>
+        </div>
+    </div>
+
     <!-- Video Background (plays on load) -->
     <div class="video-bg" id="videoBg">
         <video autoplay muted loop playsinline>
@@ -890,6 +979,23 @@
                     container.appendChild(heart);
                 }, i * 100);
             }
+        }
+
+        // YouTube Player controls
+        let isPlayerCollapsed = false;
+        
+        function toggleYoutubePlayer() {
+            const content = document.getElementById('youtubeContent');
+            const toggle = document.getElementById('youtubeToggle');
+            
+            if (isPlayerCollapsed) {
+                content.classList.remove('collapsed');
+                toggle.textContent = '−';
+            } else {
+                content.classList.add('collapsed');
+                toggle.textContent = '+';
+            }
+            isPlayerCollapsed = !isPlayerCollapsed;
         }
 
         // Initialize everything
